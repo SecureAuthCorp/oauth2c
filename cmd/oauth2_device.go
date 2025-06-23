@@ -31,11 +31,16 @@ func (c *OAuth2Cmd) DeviceGrantFlow(clientConfig oauth2.ClientConfig, serverConf
 
 	LogRequestAndResponse(authorizationRequest, authorizationResponse)
 
-	Logfln("\nGo to the following URL:\n\n%s", authorizationResponse.VerificationURIComplete)
+	verificationUri := authorizationResponse.VerificationURI
+	if authorizationResponse.VerificationURIComplete != nil {
+		verificationUri = *authorizationResponse.VerificationURIComplete
+	}
+
+	Logfln("\nGo to the following URL:\n\n%s", verificationUri)
 
 	if !clientConfig.NoBrowser {
 		Logfln("\nOpening browser...")
-		if err = browser.OpenURL(authorizationResponse.VerificationURIComplete); err != nil {
+		if err = browser.OpenURL(verificationUri); err != nil {
 			LogError(err)
 		}
 	}
@@ -45,7 +50,11 @@ func (c *OAuth2Cmd) DeviceGrantFlow(clientConfig oauth2.ClientConfig, serverConf
 	// polling
 	tokenStatus := LogAction("Waiting for token. Go to the browser to authenticate...")
 
-	ticker := time.NewTicker(time.Duration(authorizationResponse.Interval) * time.Second)
+	interval := 5 * time.Second
+	if authorizationResponse.Interval != nil {
+		interval = time.Duration(*authorizationResponse.Interval) * time.Second
+	}
+	ticker := time.NewTicker(interval)
 	done := make(chan error)
 
 	go func() {

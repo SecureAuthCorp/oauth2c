@@ -12,12 +12,12 @@ import (
 )
 
 type DeviceAuthorizationResponse struct {
-	DeviceCode              string `json:"device_code"`
-	UserCode                string `json:"user_code"`
-	VerificationURI         string `json:"verification_uri"`
-	VerificationURIComplete string `json:"verification_uri_complete"`
-	ExpiresIn               int64  `json:"expires_in"`
-	Interval                int64  `json:"interval"`
+	DeviceCode              string  `json:"device_code"`
+	UserCode                string  `json:"user_code"`
+	VerificationURI         string  `json:"verification_uri"`
+	VerificationURIComplete *string `json:"verification_uri_complete"`
+	ExpiresIn               int64   `json:"expires_in"`
+	Interval                *int64  `json:"interval"`
 }
 
 func RequestDeviceAuthorization(ctx context.Context, cconfig ClientConfig, sconfig ServerConfig, hc *http.Client) (request Request, response DeviceAuthorizationResponse, err error) {
