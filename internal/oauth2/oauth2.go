@@ -54,6 +54,7 @@ var CodeChallengeEncoder = base64.RawURLEncoding
 type ClientConfig struct {
 	IssuerURL              string `validate:"url"`
 	RedirectURL            string `validate:"url"`
+	NoOrigin               bool
 	GrantType              string `validate:"oneof=authorization_code client_credentials implicit password refresh_token urn:ietf:params:oauth:grant-type:jwt-bearer urn:ietf:params:oauth:grant-type:token-exchange urn:ietf:params:oauth:grant-type:device_code"`
 	ClientID               string
 	ClientSecret           string
@@ -536,7 +537,9 @@ func RequestToken(
 			return request, response, err
 		}
 
-		req.Header.Add("Origin", fmt.Sprintf("%s://%s", redirectURL.Scheme, redirectURL.Host))
+		if !cconfig.NoOrigin {
+			req.Header.Add("Origin", fmt.Sprintf("%s://%s", redirectURL.Scheme, redirectURL.Host))
+		}
 	}
 
 	if cconfig.DPoP {

@@ -91,6 +91,7 @@ func NewOAuth2Cmd(version, commit, date string) (cmd *OAuth2Cmd) {
 	cmd.PersistentFlags().StringSliceVar(&cconfig.Prompt, "prompt", []string{}, "end-user authorization purpose")
 	cmd.PersistentFlags().StringVar(&cconfig.MaxAge, "max-age", "", "maximum authentication age in seconds")
 	cmd.PersistentFlags().StringVar(&cconfig.AuthenticationCode, "authentication-code", "", "authentication code used for passwordless authentication")
+	cmd.PersistentFlags().BoolVar(&cconfig.NoOrigin, "no-origin", false, "do not include an Origin header")
 
 	cmd.PersistentFlags().StringVar(&sconfig.TokenEndpoint, "token-endpoint", "", "server's token endpoint")
 	cmd.PersistentFlags().StringVar(&sconfig.AuthorizationEndpoint, "authorization-endpoint", "", "server's authorization endpoint")
