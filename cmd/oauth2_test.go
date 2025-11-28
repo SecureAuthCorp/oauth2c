@@ -15,9 +15,9 @@ const (
 
 	ClientCredentialsScopes = "introspect_tokens,revoke_tokens"
 
-	TLSCertURL    = "https://raw.githubusercontent.com/cloudentity/oauth2c/master/data/cert.pem"
-	TLSKeyURL     = "https://raw.githubusercontent.com/cloudentity/oauth2c/master/data/key.pem"
-	SigningKeyURL = "https://raw.githubusercontent.com/cloudentity/oauth2c/master/data/rsa/key.json"
+	TLSCertURL    = "../data/cert.pem"
+	TLSKeyURL     = "../data/key.pem"
+	SigningKeyURL = "../data/rsa/key.json"
 )
 
 type CommandTestCase struct {
