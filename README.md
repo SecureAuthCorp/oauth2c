@@ -92,6 +92,7 @@ The available flags are:
       --authentication-code string                          authentication code used for passwordless authentication
       --authorization-endpoint string                       server's authorization endpoint
       --browser-timeout duration                            browser timeout (default 10m0s)
+      --callback-addr string                                callback server bind address (e.g., 0.0.0.0:8080)
       --callback-tls-cert string                            path to callback tls cert pem file
       --callback-tls-key string                             path to callback tls key pem file
       --claims string                                       use claims
@@ -722,6 +723,29 @@ oauth2c https://oauth2c.us.authz.cloudentity.io/oauth2c/demo \
   --callback-tls-cert https://raw.githubusercontent.com/cloudentity/oauth2c/master/data/cert.pem \
   --callback-tls-key https://raw.githubusercontent.com/cloudentity/oauth2c/master/data/key.pem
 ```
+
+#### Using a TLS-Terminating Proxy
+
+When running behind a TLS-terminating proxy (e.g., nginx, Traefik, or a cloud
+load balancer), use `--callback-addr` to specify the local bind address while
+keeping the public HTTPS URL in `--redirect-url`.
+
+```sh
+oauth2c https://oauth2c.us.authz.cloudentity.io/oauth2c/demo \
+  --client-id cauktionbud6q8ftlqq0 \
+  --client-secret HCwQ5uuUWBRHd04ivjX5Kl0Rz8zxMOekeLtqzki0GPc \
+  --response-types code \
+  --response-mode query \
+  --grant-type authorization_code \
+  --auth-method client_secret_basic \
+  --redirect-url https://example.com/callback \
+  --callback-addr 0.0.0.0:8080
+```
+
+In this configuration:
+- `--redirect-url` is the public URL sent to the IdP in the OAuth request
+- `--callback-addr` is the local address where the callback server binds
+- The callback server serves HTTP (no TLS certs provided), while the proxy handles TLS termination
 
 #### Specifying Authorization Server's Endpoint Manually
 
