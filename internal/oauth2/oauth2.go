@@ -464,6 +464,10 @@ func RequestToken(
 		if len(cconfig.Audience) > 0 {
 			request.Form.Set("audience", strings.Join(cconfig.Audience, " "))
 		}
+
+		if len(cconfig.RAR) > 0 {
+			request.Form.Set("authorization_details", cconfig.RAR)
+		}
 	}
 
 	switch cconfig.GrantType {
