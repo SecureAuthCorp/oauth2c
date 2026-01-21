@@ -67,7 +67,7 @@ type ClientConfig struct {
 	RequestObject          bool
 	EncryptedRequestObject bool
 	Insecure               bool
-	ResponseType           []string `validate:"dive,omitempty,oneof=code id_token token"`
+	ResponseType           []string `validate:"dive,omitempty,oneof=code id_token token none"`
 	ResponseMode           string   `validate:"omitempty,oneof=query form_post query.jwt form_post.jwt jwt"`
 	Username               string
 	Password               string
