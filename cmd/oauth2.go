@@ -77,6 +77,7 @@ func NewOAuth2Cmd(version, commit, date string) (cmd *OAuth2Cmd) {
 	cmd.PersistentFlags().StringVar(&cconfig.TLSRootCA, "tls-root-ca", "", "path to tls root ca pem file")
 	cmd.PersistentFlags().StringVar(&cconfig.CallbackTLSCert, "callback-tls-cert", "", "path to callback tls cert pem file")
 	cmd.PersistentFlags().StringVar(&cconfig.CallbackTLSKey, "callback-tls-key", "", "path to callback tls key pem file")
+	cmd.PersistentFlags().StringVar(&cconfig.CallbackAddr, "callback-addr", "", "callback server bind address (e.g., 0.0.0.0:8080)")
 	cmd.PersistentFlags().DurationVar(&cconfig.HTTPTimeout, "http-timeout", time.Minute, "http client timeout")
 	cmd.PersistentFlags().DurationVar(&cconfig.BrowserTimeout, "browser-timeout", 10*time.Minute, "browser timeout")
 	cmd.PersistentFlags().BoolVar(&cconfig.Insecure, "insecure", false, "allow insecure connections")

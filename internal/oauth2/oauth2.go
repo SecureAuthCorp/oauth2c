@@ -87,6 +87,7 @@ type ClientConfig struct {
 	TLSRootCA              string `validate:"omitempty,uri|file"`
 	CallbackTLSCert        string `validate:"omitempty,uri|file"`
 	CallbackTLSKey         string `validate:"omitempty,uri|file"`
+	CallbackAddr           string `validate:"omitempty"`
 	HTTPTimeout            time.Duration
 	BrowserTimeout         time.Duration
 	NoBrowser              bool
@@ -220,26 +221,33 @@ func WaitForCallback(clientConfig ClientConfig, serverConfig ServerConfig, hc *h
 		return request, errors.Wrapf(err, "failed to parse redirect url: %s", clientConfig.RedirectURL)
 	}
 
-	srv.Addr = redirectURL.Host
-
 	if redirectURL.Path == "" {
 		redirectURL.Path = "/"
 	}
 
-	if redirectURL.Scheme == "https" {
+	useTLS := clientConfig.CallbackTLSCert != "" && clientConfig.CallbackTLSKey != ""
+
+	if clientConfig.CallbackAddr != "" {
+		srv.Addr = clientConfig.CallbackAddr
+	} else {
+		srv.Addr = redirectURL.Host
+
+		if redirectURL.Port() == "" {
+			if useTLS {
+				srv.Addr += ":443"
+			} else {
+				srv.Addr += ":80"
+			}
+		}
+	}
+
+	if useTLS {
 		if cert, err = ReadKeyPair(clientConfig.CallbackTLSCert, clientConfig.CallbackTLSKey, hc); err != nil {
 			return request, errors.Wrapf(err, "failed to read callback tls key pair")
 		}
 
 		srv.TLSConfig = &tls.Config{
 			Certificates: []tls.Certificate{cert},
-		}
-		if redirectURL.Port() == "" {
-			srv.Addr += ":443"
-		}
-	} else {
-		if redirectURL.Port() == "" {
-			srv.Addr += ":80"
 		}
 	}
 
@@ -311,7 +319,7 @@ func WaitForCallback(clientConfig ClientConfig, serverConfig ServerConfig, hc *h
 	go func() {
 		defer close(done)
 
-		if redirectURL.Scheme == "https" {
+		if useTLS {
 			if serr := srv.ListenAndServeTLS("", ""); serr != http.ErrServerClosed {
 				err = serr
 			}
