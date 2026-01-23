@@ -14,7 +14,7 @@ import (
 
 	"github.com/cli/browser"
 	"github.com/cloudentity/oauth2c/internal/oauth2"
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 	"github.com/spf13/cobra"
 )
 
