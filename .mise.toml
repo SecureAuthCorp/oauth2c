@@ -1,6 +1,3 @@
 [tools]
 go = '1.25'
 golangci-lint = '2.8.0'
-
-[alias]
-golangci-lint = 'https://github.com/hypnoglow/asdf-golangci-lint'
