@@ -14,7 +14,7 @@ import (
 
 	"github.com/cli/browser"
 	"github.com/cloudentity/oauth2c/internal/oauth2"
-	"github.com/imdario/mergo"
+	"dario.cat/mergo"
 	"github.com/spf13/cobra"
 )
 
@@ -227,16 +227,16 @@ func (c *OAuth2Cmd) Authorize(
 		return c.DeviceGrantFlow(clientConfig, serverConfig, hc)
 	}
 
-	return fmt.Errorf("Unknown grant type: %s", clientConfig.GrantType)
+	return fmt.Errorf("unknown grant type: %s", clientConfig.GrantType)
 }
 
 func (c *OAuth2Cmd) PrintResult(result interface{}) {
 	output, err := json.Marshal(result)
 	if err != nil {
-		fmt.Fprintf(c.ErrOrStderr(), "%+v", err)
-		fmt.Fprintln(c.ErrOrStderr())
+		_, _ = fmt.Fprintf(c.ErrOrStderr(), "%+v", err)
+		_, _ = fmt.Fprintln(c.ErrOrStderr())
 		return
 	}
 
-	fmt.Fprintln(c.OutOrStdout(), string(output))
+	_, _ = fmt.Fprintln(c.OutOrStdout(), string(output))
 }
