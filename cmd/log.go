@@ -7,10 +7,12 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"encoding/pem"
+	"fmt"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/cli/browser"
 	"github.com/go-jose/go-jose/v3"
 	"github.com/go-jose/go-jose/v3/jwt"
 	"github.com/go-playground/validator/v10"
@@ -148,7 +150,6 @@ func LogJson(value interface{}) {
 	}
 
 	output, err := json.Marshal(value)
-
 	if err != nil {
 		pterm.Error.Println(err)
 		return
@@ -397,7 +398,6 @@ func LogKey(name string, key interface{}) {
 		pterm.FgGray.Printfln("%s", p.String())
 	case *ecdsa.PublicKey:
 		b, err := x509.MarshalPKIXPublicKey(key)
-
 		if err != nil {
 			pterm.Error.Println(err)
 		}
@@ -414,7 +414,6 @@ func LogKey(name string, key interface{}) {
 		pterm.FgGray.Printfln("%s", p.String())
 	case *ecdsa.PrivateKey:
 		b, err := x509.MarshalECPrivateKey(key)
-
 		if err != nil {
 			pterm.Error.Println(err)
 		}
@@ -471,5 +470,20 @@ func LogSubjectTokenAndActorToken(request oauth2.Request) {
 
 	if subjectToken != "" || actorToken != "" {
 		pterm.Println()
+	}
+}
+
+func LogAuthURL(url string, noBrowser bool) {
+	if noBrowser && silent {
+		fmt.Fprintln(os.Stderr, url)
+	} else {
+		Logfln("\nGo to the following URL:\n\n%s", url)
+	}
+
+	if !noBrowser {
+		Logfln("\nOpening browser...")
+		if err := browser.OpenURL(url); err != nil {
+			LogError(err)
+		}
 	}
 }

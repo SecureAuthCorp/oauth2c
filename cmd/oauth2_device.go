@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cli/browser"
 	"github.com/cloudentity/oauth2c/internal/oauth2"
 )
 
@@ -36,14 +35,7 @@ func (c *OAuth2Cmd) DeviceGrantFlow(clientConfig oauth2.ClientConfig, serverConf
 		verificationUri = *authorizationResponse.VerificationURIComplete
 	}
 
-	Logfln("\nGo to the following URL:\n\n%s", verificationUri)
-
-	if !clientConfig.NoBrowser {
-		Logfln("\nOpening browser...")
-		if err = browser.OpenURL(verificationUri); err != nil {
-			LogError(err)
-		}
-	}
+	LogAuthURL(verificationUri, clientConfig.NoBrowser)
 
 	Logln()
 

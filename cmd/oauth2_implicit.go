@@ -3,7 +3,6 @@ package cmd
 import (
 	"net/http"
 
-	"github.com/cli/browser"
 	"github.com/cloudentity/oauth2c/internal/oauth2"
 )
 
@@ -25,14 +24,7 @@ func (c *OAuth2Cmd) ImplicitGrantFlow(clientConfig oauth2.ClientConfig, serverCo
 
 	LogRequest(authorizeRequest)
 
-	Logfln("\nGo to the following URL:\n\n%s", authorizeRequest.URL.String())
-
-	if !clientConfig.NoBrowser {
-		Logfln("\nOpening browser...")
-		if err = browser.OpenURL(authorizeRequest.URL.String()); err != nil {
-			LogError(err)
-		}
-	}
+	LogAuthURL(authorizeRequest.URL.String(), clientConfig.NoBrowser)
 
 	Logln()
 
