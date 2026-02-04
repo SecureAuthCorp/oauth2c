@@ -1,23 +1,20 @@
 package oauth2
 
 import (
-	"math/rand"
-	"time"
+	"crypto/rand"
 )
 
-var r *rand.Rand
-
-func init() {
-	r = rand.New(rand.NewSource(time.Now().UnixNano()))
-}
-
-var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+var letters = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 
 func RandomString(n int) string {
-	b := make([]rune, n)
+	b := make([]byte, n)
+
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
+	}
 
 	for i := range b {
-		b[i] = letter[r.Intn(len(letter))]
+		b[i] = letters[b[i]%byte(len(letters))]
 	}
 
 	return string(b)
