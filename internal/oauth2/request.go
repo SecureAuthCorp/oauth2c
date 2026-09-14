@@ -21,8 +21,11 @@ type Request struct {
 	JARM          map[string]interface{}
 	RequestObject string
 	SigningKey    interface{}
-	EncryptionKey interface{}
-	Cert          *x509.Certificate
+	// The client assertion is signed independently of the grant assertion and the request
+	// object, so its key must not share a field with them.
+	ClientAssertionKey interface{}
+	EncryptionKey      interface{}
+	Cert               *x509.Certificate
 }
 
 func (r *Request) AuthorizeRequest(
@@ -205,7 +208,7 @@ func (r *Request) AuthenticateClient(
 	case ClientSecretJwtAuthMethod:
 		var clientAssertion string
 
-		if clientAssertion, r.SigningKey, err = SignJWT(
+		if clientAssertion, r.ClientAssertionKey, err = SignJWT(
 			ClientAssertionClaims(sconfig, cconfig),
 			SecretSigner([]byte(cconfig.ClientSecret)),
 		); err != nil {
@@ -217,7 +220,7 @@ func (r *Request) AuthenticateClient(
 	case PrivateKeyJwtAuthMethod:
 		var clientAssertion string
 
-		if clientAssertion, r.SigningKey, err = SignJWT(
+		if clientAssertion, r.ClientAssertionKey, err = SignJWT(
 			ClientAssertionClaims(sconfig, cconfig),
 			JWKSigner(cconfig.SigningKey, hc),
 		); err != nil {
