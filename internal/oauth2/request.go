@@ -200,7 +200,7 @@ func (r *Request) AuthenticateClient(
 	var err error
 
 	switch cconfig.AuthMethod {
-	case NoneAuthMethod:
+	case NoneAuthMethod, "":
 		r.Form.Set("client_id", cconfig.ClientID)
 	case ClientSecretPostAuthMethod:
 		r.Form.Set("client_id", cconfig.ClientID)

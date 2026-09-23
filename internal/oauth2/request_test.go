@@ -89,6 +89,42 @@ func TestRequestTokenResource(t *testing.T) {
 	}
 }
 
+func TestRequestTokenClientID(t *testing.T) {
+	tests := map[string]struct {
+		authMethod string
+		expected   string
+	}{
+		"unset":              {authMethod: "", expected: "test-client"},
+		"none":               {authMethod: oauth2.NoneAuthMethod, expected: "test-client"},
+		"client_secret_post": {authMethod: oauth2.ClientSecretPostAuthMethod, expected: "test-client"},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			srv, form := formCaptureServer(t)
+
+			cconfig := oauth2.ClientConfig{
+				ClientID:   "test-client",
+				GrantType:  oauth2.DeviceGrantType,
+				AuthMethod: tc.authMethod,
+			}
+			sconfig := oauth2.ServerConfig{TokenEndpoint: srv.URL}
+
+			_, _, err := oauth2.RequestToken(
+				context.Background(),
+				cconfig,
+				sconfig,
+				&http.Client{},
+				oauth2.WithDeviceCode("device-code"),
+			)
+			require.NoError(t, err)
+
+			require.Equal(t, tc.expected, form().Get("client_id"))
+			require.Equal(t, "device-code", form().Get("device_code"))
+		})
+	}
+}
+
 func TestRequestTokenRequestedTokenType(t *testing.T) {
 	tests := map[string]struct {
 		requestedTokenType string
