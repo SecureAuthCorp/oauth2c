@@ -121,6 +121,7 @@ func LogInputData(cc oauth2.ClientConfig) {
 		{"Password", cc.Password},
 		{"Refresh token", cc.RefreshToken},
 		{"Signing key", cc.SigningKey},
+		{"Requested token type", cc.RequestedTokenType},
 		{"Subject token type", cc.SubjectTokenType},
 		{"Actors token type", cc.ActorTokenType},
 		{"TLS client cert", cc.TLSCert},
@@ -327,18 +328,13 @@ func LogRequestObject(r oauth2.Request) {
 			LogJson(requestClaims)
 			pterm.Println()
 
-			if r.SigningKey != nil {
-				LogKey("Signing key", r.SigningKey)
-			}
-
-			if r.EncryptionKey != nil {
-				LogKey("Encryption key", r.EncryptionKey)
-			}
+			LogKey("Signing key", r.SigningKey)
+			LogKey("Encryption key", r.EncryptionKey)
 		}
 	}
 }
 
-func LogAssertion(request oauth2.Request, title string, name string) {
+func LogAssertion(request oauth2.Request, title string, name string, signingKey interface{}) {
 	var (
 		assertion = request.Form.Get(name)
 		token     *jwt.JSONWebToken
@@ -365,10 +361,14 @@ func LogAssertion(request oauth2.Request, title string, name string) {
 	LogJson(claims)
 	pterm.Println("")
 
-	LogKey("Signing key", request.SigningKey)
+	LogKey("Signing key", signingKey)
 }
 
 func LogKey(name string, key interface{}) {
+	if key == nil {
+		return
+	}
+
 	var err error
 
 	pterm.Println(name)

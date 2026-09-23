@@ -59,8 +59,8 @@ func (c *OAuth2Cmd) tokenEndpointFlow(
 		return err
 	}
 
-	LogAssertion(tokenRequest, "Assertion", "assertion")
-	LogAssertion(tokenRequest, "Client assertion", "client_assertion")
+	LogAssertion(tokenRequest, "Assertion", "assertion", tokenRequest.SigningKey)
+	LogAssertion(tokenRequest, "Client assertion", "client_assertion", tokenRequest.ClientAssertionKey)
 	LogSubjectTokenAndActorToken(tokenRequest)
 	LogAuthMethod(clientConfig)
 	LogRequestAndResponse(tokenRequest, tokenResponse)

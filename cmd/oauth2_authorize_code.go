@@ -29,7 +29,7 @@ func (c *OAuth2Cmd) AuthorizationCodeGrantFlow(clientConfig oauth2.ClientConfig,
 			return err
 		}
 
-		LogAssertion(parRequest, "Client assertion", "client_assertion")
+		LogAssertion(parRequest, "Client assertion", "client_assertion", parRequest.ClientAssertionKey)
 		LogAuthMethod(clientConfig)
 		LogRequestObject(parRequest)
 		LogRequestAndResponse(parRequest, parResponse)
