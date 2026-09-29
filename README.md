@@ -707,6 +707,39 @@ oauth2c https://oauth2c.us.authz.cloudentity.io/oauth2c/demo \
   --rar '[{"type":"payment_initiation","locations":["https://example.com/payments"],"instructedAmount":{"currency":"EUR","amount":"123.50"},"creditorName":"Merchant A","creditorAccount":{"bic":"ABCIDEFFXXX","iban":"DE02100100109307118603"},"remittanceInformationUnstructured":"Ref Number Merchant"}]'
 ```
 
+#### Client ID Metadata Document (CIMD)
+
+With [CIMD](https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/)
+the `client_id` is an https URL of a JSON document describing the client, so it
+needs no registration at the authorization server. This repository publishes
+example documents on GitHub Pages; they use the same test keys as the examples
+above and the default callback `http://localhost:9876/callback`. They are for
+testing only: the private key is public, so anyone can act as these clients.
+
+| Document | Client authentication |
+|---|---|
+| [`data/cimd/public.json`](https://secureauthcorp.github.io/oauth2c/data/cimd/public.json) | `none` (public client, PKCE) |
+| [`data/cimd/private-key-jwt.json`](https://secureauthcorp.github.io/oauth2c/data/cimd/private-key-jwt.json) | `private_key_jwt`, keys from `jwks_uri` |
+| [`data/cimd/private-key-jwt-inline-jwks.json`](https://secureauthcorp.github.io/oauth2c/data/cimd/private-key-jwt-inline-jwks.json) | `private_key_jwt`, keys inline in `jwks` |
+
+The authorization server must support CIMD (`client_id_metadata_document_supported`
+in its metadata).
+
+```sh
+oauth2c https://<authorization-server-issuer> \
+  --client-id https://secureauthcorp.github.io/oauth2c/data/cimd/private-key-jwt.json \
+  --signing-key https://raw.githubusercontent.com/SecureAuthCorp/oauth2c/master/data/rsa/key.json \
+  --response-types code \
+  --response-mode query \
+  --grant-type authorization_code \
+  --auth-method private_key_jwt \
+  --scopes openid,email \
+  --pkce
+```
+
+For the public client use `--client-id https://secureauthcorp.github.io/oauth2c/data/cimd/public.json`,
+`--auth-method none` and no `--signing-key`.
+
 ### Miscellaneous
 
 #### Using HTTPs for Callback URL

@@ -1,0 +1,18 @@
+{
+  "client_id": "https://secureauthcorp.github.io/oauth2c/data/cimd/private-key-jwt.json",
+  "client_name": "oauth2c (private_key_jwt, jwks_uri)",
+  "client_uri": "https://github.com/SecureAuthCorp/oauth2c",
+  "redirect_uris": [
+    "http://localhost:9876/callback"
+  ],
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "token_endpoint_auth_method": "private_key_jwt",
+  "jwks_uri": "https://secureauthcorp.github.io/oauth2c/data/rsa/public.json",
+  "scope": "openid email profile offline_access"
+}
