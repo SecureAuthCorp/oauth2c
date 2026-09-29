@@ -1,0 +1,16 @@
+{
+  "client_id": "https://secureauthcorp.github.io/oauth2c/data/cimd/public.json",
+  "client_name": "oauth2c (public client)",
+  "client_uri": "https://github.com/SecureAuthCorp/oauth2c",
+  "redirect_uris": [
+    "http://localhost:9876/callback"
+  ],
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "token_endpoint_auth_method": "none"
+}
