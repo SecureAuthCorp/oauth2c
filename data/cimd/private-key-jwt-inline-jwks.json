@@ -24,5 +24,6 @@
         "n": "rhipCrDSyEJpr8JJnBORLXb4jYbzCDNJAYCUCuYts-z7iLTnfNv2AkmphbY9EpGk1j96IQZq7g4fwFLh5HS9SFEPpTRh2-5Pp1QRnd-nhSaeT7hkVXGTGjlmRDHgv1-69_MZFSuBFA9I3yzdT7LlkWwPZS7WL5MYHNtbLJSIF1ls-MLleGci5qWCcLXPqMpeG_VEA53IhfIcVIMDU3g3gWqqEM7CTWdkdJ12fUyMpEPzF1VOYGadO181zdo6sIkdyWqAoCesUv_9Xpi9weJT_yduiInb0xzpsriP_U-dXwHf0ULI7vKIqa--WMbGUHD974tSxTOknYvRSyGRHWClmw"
       }
     ]
-  }
+  },
+  "scope": "openid email profile offline_access"
 }

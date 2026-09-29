@@ -12,5 +12,6 @@
   "response_types": [
     "code"
   ],
-  "token_endpoint_auth_method": "none"
+  "token_endpoint_auth_method": "none",
+  "scope": "openid email profile offline_access"
 }

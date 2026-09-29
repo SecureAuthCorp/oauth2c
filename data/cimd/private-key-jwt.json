@@ -13,5 +13,6 @@
     "code"
   ],
   "token_endpoint_auth_method": "private_key_jwt",
-  "jwks_uri": "https://secureauthcorp.github.io/oauth2c/data/rsa/public.json"
+  "jwks_uri": "https://secureauthcorp.github.io/oauth2c/data/rsa/public.json",
+  "scope": "openid email profile offline_access"
 }
