@@ -28,7 +28,7 @@ const (
 	JWTBearerGrantType         string = "urn:ietf:params:oauth:grant-type:jwt-bearer"
 	TokenExchangeGrantType     string = "urn:ietf:params:oauth:grant-type:token-exchange"
 	DeviceGrantType            string = "urn:ietf:params:oauth:grant-type:device_code"
-	// CIBAGrantType              string = "urn:openid:params:grant-type:ciba"
+	CIBAGrantType              string = "urn:openid:params:grant-type:ciba"
 )
 
 // auth methods
@@ -55,7 +55,7 @@ type ClientConfig struct {
 	IssuerURL              string `validate:"url"`
 	RedirectURL            string `validate:"url"`
 	NoOrigin               bool
-	GrantType              string `validate:"oneof=authorization_code client_credentials implicit password refresh_token urn:ietf:params:oauth:grant-type:jwt-bearer urn:ietf:params:oauth:grant-type:token-exchange urn:ietf:params:oauth:grant-type:device_code"`
+	GrantType              string `validate:"oneof=authorization_code client_credentials implicit password refresh_token urn:ietf:params:oauth:grant-type:jwt-bearer urn:ietf:params:oauth:grant-type:token-exchange urn:ietf:params:oauth:grant-type:device_code urn:openid:params:grant-type:ciba"`
 	ClientID               string
 	ClientSecret           string
 	Scopes                 []string
@@ -98,6 +98,7 @@ type ClientConfig struct {
 	Prompt                 []string
 	MaxAge                 string
 	AuthenticationCode     string
+	BindingMessage         string
 }
 
 func RequestAuthorization(cconfig ClientConfig, sconfig ServerConfig, hc *http.Client) (r Request, codeVerifier string, err error) {
@@ -405,6 +406,7 @@ func NewTokenResponseFromForm(f url.Values) TokenResponse {
 type RequestTokenParams struct {
 	Code         string
 	DeviceCode   string
+	AuthReqID    string
 	CodeVerifier string
 	RedirectURL  string
 }
@@ -420,6 +422,12 @@ func WithAuthorizationCode(code string) func(*RequestTokenParams) {
 func WithDeviceCode(deviceCode string) func(*RequestTokenParams) {
 	return func(opts *RequestTokenParams) {
 		opts.DeviceCode = deviceCode
+	}
+}
+
+func WithAuthReqID(authReqID string) func(*RequestTokenParams) {
+	return func(opts *RequestTokenParams) {
+		opts.AuthReqID = authReqID
 	}
 }
 
@@ -505,6 +513,8 @@ func RequestToken(
 		}
 	case DeviceGrantType:
 		request.Form.Set("device_code", params.DeviceCode)
+	case CIBAGrantType:
+		request.Form.Set("auth_req_id", params.AuthReqID)
 	}
 
 	if endpoint, err = request.AuthenticateClient(

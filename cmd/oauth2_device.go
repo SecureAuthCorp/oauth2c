@@ -42,48 +42,7 @@ func (c *OAuth2Cmd) DeviceGrantFlow(clientConfig oauth2.ClientConfig, serverConf
 	// polling
 	tokenStatus := LogAction("Waiting for token. Go to the browser to authenticate...")
 
-	interval := 5 * time.Second
-	if authorizationResponse.Interval != nil {
-		interval = time.Duration(*authorizationResponse.Interval) * time.Second
-	}
-	ticker := time.NewTicker(interval)
-	done := make(chan error)
-
-	go func() {
-		var oauth2Error *oauth2.Error
-
-		defer close(done)
-
-		for {
-			select {
-			case <-done:
-				return
-			case <-ticker.C:
-				if tokenRequest, tokenResponse, err = oauth2.RequestToken(
-					context.Background(),
-					clientConfig,
-					serverConfig,
-					hc,
-					oauth2.WithDeviceCode(authorizationResponse.DeviceCode),
-				); err != nil {
-					if errors.As(err, &oauth2Error) {
-						switch oauth2Error.ErrorCode {
-						case oauth2.ErrAuthorizationPending, oauth2.ErrSlowDown:
-							continue
-						}
-					}
-
-					done <- err
-
-					return
-				} else {
-					return
-				}
-			}
-		}
-	}()
-
-	err = <-done
+	tokenRequest, tokenResponse, err = pollToken(clientConfig, serverConfig, hc, authorizationResponse.Interval, oauth2.WithDeviceCode(authorizationResponse.DeviceCode))
 
 	LogSection("Exchange device code for token")
 
@@ -101,4 +60,39 @@ func (c *OAuth2Cmd) DeviceGrantFlow(clientConfig oauth2.ClientConfig, serverConf
 	c.PrintResult(tokenResponse)
 
 	return nil
+}
+
+func pollToken(
+	clientConfig oauth2.ClientConfig,
+	serverConfig oauth2.ServerConfig,
+	hc *http.Client,
+	intervalSec *int64,
+	opt oauth2.RequestTokenOption,
+) (tokenRequest oauth2.Request, tokenResponse oauth2.TokenResponse, err error) {
+	var oauth2Error *oauth2.Error
+
+	interval := 5 * time.Second
+	if intervalSec != nil {
+		interval = time.Duration(*intervalSec) * time.Second
+	}
+
+	for {
+		time.Sleep(interval)
+
+		if tokenRequest, tokenResponse, err = oauth2.RequestToken(context.Background(), clientConfig, serverConfig, hc, opt); err == nil {
+			return tokenRequest, tokenResponse, nil
+		}
+
+		if !errors.As(err, &oauth2Error) {
+			return tokenRequest, tokenResponse, err
+		}
+
+		switch oauth2Error.ErrorCode {
+		case oauth2.ErrSlowDown:
+			interval += 5 * time.Second
+		case oauth2.ErrAuthorizationPending:
+		default:
+			return tokenRequest, tokenResponse, err
+		}
+	}
 }

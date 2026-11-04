@@ -17,7 +17,7 @@ advanced OAuth 2.0, OIDC, OIDF FAPI and JWT profiles.
 
 - support for **authorization code**, **hybrid**, **implicit**, **password**,
   **client credentials**, **refresh token**, **JWT bearer**, **token exchange**,
-  **device** grant flows
+  **device**, **CIBA** grant flows
 - support for **client secret basic**, **client secret post**, **client secret
   JWT**, **private key JWT**, **TLS client auth** client authentication methods
 - passing request parameters as plaintext, signed, and/or encrypted JWT
@@ -91,6 +91,8 @@ The available flags are:
       --auth-method string                                  token endpoint authentication method
       --authentication-code string                          authentication code used for passwordless authentication
       --authorization-endpoint string                       server's authorization endpoint
+      --backchannel-authentication-endpoint string          server's CIBA backchannel authentication endpoint
+      --binding-message string                              CIBA binding message shown on the authentication device
       --browser-timeout duration                            browser timeout (default 10m0s)
       --callback-addr string                                callback server bind address (e.g., 0.0.0.0:8080)
       --callback-tls-cert string                            path to callback tls cert pem file
@@ -323,6 +325,25 @@ oauth2c https://oauth2c.us.authz.cloudentity.io/oauth2c/demo \
 ```
 
 [Learn more about the device flow](https://cloudentity.com/developers/basics/oauth-grant-types/device/)
+
+#### CIBA
+
+Client Initiated Backchannel Authentication (poll mode). The client asks the
+server to authenticate the user identified by `--login-hint` (or
+`--id-token-hint`) on a separate authentication device, then polls the token
+endpoint until the user approves the request. The server and client must have
+CIBA enabled with the poll delivery mode.
+
+```sh
+oauth2c https://<issuer-url> \
+  --client-id <client-id> \
+  --client-secret <client-secret> \
+  --grant-type urn:openid:params:grant-type:ciba \
+  --auth-method client_secret_basic \
+  --scopes openid \
+  --login-hint <user> \
+  --binding-message "Sign in to oauth2c"
+```
 
 #### JWT Bearer
 

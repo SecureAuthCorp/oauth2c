@@ -17,11 +17,13 @@ type ServerConfig struct {
 
 	AuthorizationEndpoint              string `json:"authorization_endpoint"`
 	DeviceAuthorizationEndpoint        string `json:"device_authorization_endpoint"`
+	BackchannelAuthenticationEndpoint  string `json:"backchannel_authentication_endpoint"`
 	PushedAuthorizationRequestEndpoint string `json:"pushed_authorization_request_endpoint"`
 	TokenEndpoint                      string `json:"token_endpoint"`
 	MTLsEndpointAliases                struct {
 		TokenEndpoint                      string `json:"token_endpoint"`
 		PushedAuthorizationRequestEndpoint string `json:"pushed_authorization_request_endpoint"`
+		BackchannelAuthenticationEndpoint  string `json:"backchannel_authentication_endpoint"`
 	} `json:"mtls_endpoint_aliases"`
 
 	JWKsURI string `json:"jwks_uri"`
@@ -30,6 +32,7 @@ type ServerConfig struct {
 func (c ServerConfig) IsConfigured() bool {
 	return c.AuthorizationEndpoint != "" ||
 		c.DeviceAuthorizationEndpoint != "" ||
+		c.BackchannelAuthenticationEndpoint != "" ||
 		c.PushedAuthorizationRequestEndpoint != "" ||
 		c.TokenEndpoint != "" ||
 		c.MTLsEndpointAliases.TokenEndpoint != "" ||

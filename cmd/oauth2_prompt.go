@@ -10,7 +10,7 @@ func PromptForClientConfig(client oauth2.ClientConfig, server oauth2.ServerConfi
 
 	// auth method
 	switch client.GrantType {
-	case oauth2.AuthorizationCodeGrantType, oauth2.ClientCredentialsGrantType, oauth2.RefreshTokenGrantType, oauth2.PasswordGrantType, oauth2.JWTBearerGrantType:
+	case oauth2.AuthorizationCodeGrantType, oauth2.ClientCredentialsGrantType, oauth2.RefreshTokenGrantType, oauth2.PasswordGrantType, oauth2.JWTBearerGrantType, oauth2.CIBAGrantType:
 		if client.AuthMethod == "" {
 			client.AuthMethod = PromptStringSlice("Token endpoint auth method", server.SupportedTokenEndpointAuthMethods)
 		}
@@ -56,6 +56,10 @@ func PromptForClientConfig(client oauth2.ClientConfig, server oauth2.ServerConfi
 	case oauth2.RefreshTokenGrantType:
 		if client.RefreshToken == "" {
 			client.RefreshToken = PromptString("Refresh token")
+		}
+	case oauth2.CIBAGrantType:
+		if client.LoginHint == "" && client.IDTokenHint == "" {
+			client.LoginHint = PromptString("Login hint")
 		}
 	}
 
