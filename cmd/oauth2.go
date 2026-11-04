@@ -95,11 +95,13 @@ func NewOAuth2Cmd(version, commit, date string) (cmd *OAuth2Cmd) {
 	cmd.PersistentFlags().StringSliceVar(&cconfig.Prompt, "prompt", []string{}, "end-user authorization purpose")
 	cmd.PersistentFlags().StringVar(&cconfig.MaxAge, "max-age", "", "maximum authentication age in seconds")
 	cmd.PersistentFlags().StringVar(&cconfig.AuthenticationCode, "authentication-code", "", "authentication code used for passwordless authentication")
+	cmd.PersistentFlags().StringVar(&cconfig.BindingMessage, "binding-message", "", "CIBA binding message shown on the authentication device")
 	cmd.PersistentFlags().BoolVar(&cconfig.NoOrigin, "no-origin", false, "do not include an Origin header")
 
 	cmd.PersistentFlags().StringVar(&sconfig.TokenEndpoint, "token-endpoint", "", "server's token endpoint")
 	cmd.PersistentFlags().StringVar(&sconfig.AuthorizationEndpoint, "authorization-endpoint", "", "server's authorization endpoint")
 	cmd.PersistentFlags().StringVar(&sconfig.DeviceAuthorizationEndpoint, "device-authorization-endpoint", "", "server's device authorization endpoint")
+	cmd.PersistentFlags().StringVar(&sconfig.BackchannelAuthenticationEndpoint, "backchannel-authentication-endpoint", "", "server's CIBA backchannel authentication endpoint")
 	cmd.PersistentFlags().StringVar(&sconfig.PushedAuthorizationRequestEndpoint, "pushed-authorization-request-endpoint", "", "server's pushed authorization request endpoint")
 	cmd.PersistentFlags().StringVar(&sconfig.MTLsEndpointAliases.TokenEndpoint, "mtls-token-endpoint", "", "server's mtls token endpoint")
 	cmd.PersistentFlags().StringVar(&sconfig.MTLsEndpointAliases.PushedAuthorizationRequestEndpoint, "mtls-pushed-authorization-request-endpoint", "", "server's mtls pushed authorization request endpoint")
@@ -228,6 +230,8 @@ func (c *OAuth2Cmd) Authorize(
 		return c.TokenExchangeGrantFlow(clientConfig, serverConfig, hc)
 	case oauth2.DeviceGrantType:
 		return c.DeviceGrantFlow(clientConfig, serverConfig, hc)
+	case oauth2.CIBAGrantType:
+		return c.CIBAGrantFlow(clientConfig, serverConfig, hc)
 	}
 
 	return fmt.Errorf("unknown grant type: %s", clientConfig.GrantType)
